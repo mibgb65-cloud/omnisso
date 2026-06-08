@@ -1,0 +1,7 @@
+OIDC_CLIENT_ID=openai-workspace
+OIDC_CLIENT_SECRET=dev-secret-change-me
+OIDC_REDIRECT_URI=
+OIDC_PRIVATE_JWK={"kty":"RSA","n":"replace-me","e":"AQAB","d":"replace-me"}
+
+# 可选。为空时 Worker 会自动使用当前请求的 origin 作为 issuer。
+# ISSUER=https://sso.example.com
