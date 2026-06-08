@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "omni-sso",
+  "name": "omnisso",
   "main": "src/worker/index.ts",
   "compatibility_date": "2026-06-08",
   "assets": {
