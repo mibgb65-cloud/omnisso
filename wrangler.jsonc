@@ -44,6 +44,6 @@
   "vars": {
     "ISSUER": "https://sso.aicnio.com",
     "OIDC_CLIENT_ID": "openai-workspace",
-    "OIDC_REDIRECT_URI": "https://external.auth.openai.com/sso/oidc/rxOnGtpO5HbiplDmonS6fxGLp/callback"
+    "OIDC_REDIRECT_URI": "https://external.auth.openai.com/sso/oidc/rx0nGtpO5HbiplDmonS6fxGLp/callback"
   }
 }
