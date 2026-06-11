@@ -34,16 +34,5 @@
         "AuthCodeStore"
       ]
     }
-  ],
-  "secrets": {
-    "required": [
-      "OIDC_CLIENT_SECRET",
-      "OIDC_PRIVATE_JWK"
-    ]
-  },
-  "vars": {
-    "ISSUER": "https://sso.aicnio.com",
-    "OIDC_CLIENT_ID": "openai-workspace",
-    "OIDC_REDIRECT_URI": "https://external.auth.openai.com/sso/oidc/rx0nGtpO5HbiplDmonS6fxGLp/callback"
-  }
+  ]
 }

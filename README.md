@@ -76,13 +76,23 @@ http://localhost:8787/authorize?client_id=openai-workspace&redirect_uri=https%3A
 
 ## 部署到 Cloudflare
 
+这个仓库的 `wrangler.jsonc` 只保留可共享的 Worker 配置，不提交任何人的域名、OpenAI callback 或密钥。每个部署者都需要在自己的 Cloudflare 项目里配置下面这些值。
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `OIDC_CLIENT_SECRET` | Secret | 是 | OpenAI OIDC 配置里填写的 Client Secret，建议使用强随机字符串。 |
+| `OIDC_PRIVATE_JWK` | Secret | 是 | `npm run generate:key` 输出的整行 RSA private JWK JSON。 |
+| `OIDC_CLIENT_ID` | Variable | 否 | 默认是 `openai-workspace`，如果 OpenAI 里用了其他 Client ID 就设置它。 |
+| `OIDC_REDIRECT_URI` | Variable | 建议 | OpenAI 给出的 callback/redirect URI。为空时不会限制 redirect URI，生产环境建议设置。 |
+| `ISSUER` | Variable | 否 | 默认使用当前请求 origin；自定义域名和最终访问域名不一致时再设置。 |
+
 登录 Cloudflare：
 
 ```powershell
 npx wrangler login
 ```
 
-设置 OpenAI client secret：
+设置 OpenAI client secret。这个值后续也要填到 OpenAI Workspace 的 Client Secret：
 
 ```powershell
 npx wrangler secret put OIDC_CLIENT_SECRET
@@ -101,17 +111,15 @@ npx wrangler secret put OIDC_PRIVATE_JWK
 npm run deploy
 ```
 
-如果使用自定义域名，建议在 `wrangler.jsonc` 里配置或通过 Cloudflare Dashboard 设置：
+普通变量建议通过 Cloudflare Dashboard 设置：
 
 ```text
-ISSUER=https://sso.example.com
-OIDC_REDIRECT_URI={OpenAI 给你的 callback/redirect URI}
-OIDC_CLIENT_ID={OpenAI 中配置的 Client ID}
+Workers & Pages -> 你的 Worker -> Settings -> Variables and Secrets
 ```
 
-`OIDC_CLIENT_SECRET` 和 `OIDC_PRIVATE_JWK` 必须用 secret，不要写进 Git。
+如果是通过 GitHub 连接 Cloudflare Workers Builds 部署，需要在第一次构建前就在导入项目的配置页或 Worker 的 Settings 里添加上面的 Secrets 和 Variables。`OIDC_CLIENT_SECRET` 和 `OIDC_PRIVATE_JWK` 必须用 Secret，不要写进 Git。
 
-本项目使用 GitHub 连接 Cloudflare Workers Builds，部署命令会执行 `npx wrangler deploy`。因此 `wrangler.jsonc` 是普通变量的主要来源；配置中已设置 `keep_vars: true`，避免下次部署覆盖 Dashboard 中手动维护的变量。敏感信息仍然必须通过 Cloudflare Dashboard 或 `wrangler secret put` 设置为 Secret。
+配置中保留了 `keep_vars: true`，避免后续 `wrangler deploy` 清空 Dashboard 中维护的变量。仓库没有声明 `secrets.required`，这样新账号首次部署不会因为还没设置 Secret 而直接失败；但实际 OIDC 登录仍然必须配置 `OIDC_CLIENT_SECRET` 和 `OIDC_PRIVATE_JWK`，否则 `/token` 或 `/.well-known/jwks.json` 会返回配置错误。
 
 ## OpenAI OIDC 配置
 
